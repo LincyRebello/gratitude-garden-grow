@@ -1,11 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Garden from "@/components/Garden";
+import GratitudeForm from "@/components/GratitudeForm";
+import StatsBar from "@/components/StatsBar";
+import { useGratitudeStore } from "@/hooks/useGratitudeStore";
+import { Leaf } from "lucide-react";
 
 const Index = () => {
+  const { entries, addEntry, hasEntryToday, todayEntry, streak } = useGratitudeStore();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto max-w-xl px-4 py-10 space-y-8">
+        {/* Header */}
+        <header className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <Leaf className="h-6 w-6 text-primary" />
+            <h1 className="font-display text-3xl font-semibold text-foreground tracking-tight">
+              Gratitude Garden
+            </h1>
+          </div>
+          <p className="text-muted-foreground text-sm">
+            Plant one seed of gratitude each day and watch your garden grow.
+          </p>
+        </header>
+
+        {/* Stats */}
+        <StatsBar totalEntries={entries.length} streak={streak} />
+
+        {/* Garden */}
+        <Garden entries={entries} />
+
+        {/* Form */}
+        <GratitudeForm
+          onSubmit={addEntry}
+          hasEntryToday={hasEntryToday}
+          todayText={todayEntry?.text}
+        />
       </div>
     </div>
   );
