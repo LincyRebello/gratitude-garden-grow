@@ -1,11 +1,15 @@
+import { useState } from "react";
 import Garden from "@/components/Garden";
 import GratitudeForm from "@/components/GratitudeForm";
+import JournalView from "@/components/JournalView";
 import StatsBar from "@/components/StatsBar";
 import { useGratitudeStore } from "@/hooks/useGratitudeStore";
-import { Leaf } from "lucide-react";
+import { Leaf, BookOpen, Flower2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const { entries, addEntry, hasEntryToday, todayEntry, streak } = useGratitudeStore();
+  const [showJournal, setShowJournal] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,8 +30,21 @@ const Index = () => {
         {/* Stats */}
         <StatsBar totalEntries={entries.length} streak={streak} />
 
-        {/* Garden */}
-        <Garden entries={entries} />
+        {/* Toggle */}
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowJournal(!showJournal)}
+            className="font-display gap-2"
+          >
+            {showJournal ? <Flower2 className="h-4 w-4" /> : <BookOpen className="h-4 w-4" />}
+            {showJournal ? "View Garden" : "View Journal"}
+          </Button>
+        </div>
+
+        {/* Garden or Journal */}
+        {showJournal ? <JournalView entries={entries} /> : <Garden entries={entries} />}
 
         {/* Form */}
         <GratitudeForm
