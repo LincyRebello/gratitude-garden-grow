@@ -1,15 +1,21 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Garden from "@/components/Garden";
 import GratitudeForm from "@/components/GratitudeForm";
 import JournalView from "@/components/JournalView";
 import StatsBar from "@/components/StatsBar";
+import StatsDashboard from "@/components/StatsDashboard";
+import ShareGarden from "@/components/ShareGarden";
+import DailyReminder from "@/components/DailyReminder";
 import { useGratitudeStore } from "@/hooks/useGratitudeStore";
-import { Leaf, BookOpen, Flower2 } from "lucide-react";
+import { Leaf, BookOpen, Flower2, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+type View = "garden" | "journal" | "stats";
 
 const Index = () => {
   const { entries, addEntry, hasEntryToday, todayEntry, streak } = useGratitudeStore();
-  const [showJournal, setShowJournal] = useState(false);
+  const [view, setView] = useState<View>("garden");
+  const gardenRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="min-h-screen bg-background">
@@ -30,21 +36,48 @@ const Index = () => {
         {/* Stats */}
         <StatsBar totalEntries={entries.length} streak={streak} />
 
-        {/* Toggle */}
-        <div className="flex justify-center">
+        {/* View toggles */}
+        <div className="flex justify-center gap-2">
           <Button
-            variant="outline"
+            variant={view === "garden" ? "default" : "outline"}
             size="sm"
-            onClick={() => setShowJournal(!showJournal)}
+            onClick={() => setView("garden")}
             className="font-display gap-2"
           >
-            {showJournal ? <Flower2 className="h-4 w-4" /> : <BookOpen className="h-4 w-4" />}
-            {showJournal ? "View Garden" : "View Journal"}
+            <Flower2 className="h-4 w-4" />
+            Garden
+          </Button>
+          <Button
+            variant={view === "journal" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setView("journal")}
+            className="font-display gap-2"
+          >
+            <BookOpen className="h-4 w-4" />
+            Journal
+          </Button>
+          <Button
+            variant={view === "stats" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setView("stats")}
+            className="font-display gap-2"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Stats
           </Button>
         </div>
 
-        {/* Garden or Journal */}
-        {showJournal ? <JournalView entries={entries} /> : <Garden entries={entries} />}
+        {/* Views */}
+        {view === "garden" && (
+          <div className="space-y-4">
+            <div ref={gardenRef}>
+              <Garden entries={entries} />
+            </div>
+            <ShareGarden gardenRef={gardenRef} totalPlants={entries.length} streak={streak} />
+          </div>
+        )}
+        {view === "journal" && <JournalView entries={entries} />}
+        {view === "stats" && <StatsDashboard entries={entries} streak={streak} />}
 
         {/* Form */}
         <GratitudeForm
@@ -52,6 +85,9 @@ const Index = () => {
           hasEntryToday={hasEntryToday}
           todayText={todayEntry?.text}
         />
+
+        {/* Daily Reminder */}
+        <DailyReminder />
       </div>
     </div>
   );
