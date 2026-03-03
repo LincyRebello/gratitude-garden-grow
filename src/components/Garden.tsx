@@ -1,5 +1,6 @@
 import { GratitudeEntry } from "@/hooks/useGratitudeStore";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import GardenCreatures from "@/components/GardenCreatures";
 
 // Color palettes for variety - each plant gets a unique combination
 const BLOOM_COLORS = [
@@ -27,7 +28,7 @@ type PlantRenderer = (i: number, bloomColor: string, leafColor: string, size: nu
 
 const PLANT_VARIANTS: PlantRenderer[] = [
   // Tulip
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.3}s` }}>
       <line x1="30" y1="80" x2="30" y2="35" stroke={leaf} strokeWidth="3" strokeLinecap="round" />
       <path d="M18 35 Q22 10, 30 8 Q38 10, 42 35 Q30 30, 18 35Z" fill={bloom} />
@@ -35,7 +36,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Daisy
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.4}s` }}>
       <line x1="30" y1="80" x2="30" y2="30" stroke={leaf} strokeWidth="3" strokeLinecap="round" />
       <path d="M20 55 Q10 45, 15 38" stroke={leaf} strokeWidth="2" fill="none" />
@@ -47,7 +48,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Sprout with berry
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.2}s` }}>
       <line x1="30" y1="80" x2="30" y2="25" stroke={leaf} strokeWidth="3" strokeLinecap="round" />
       <path d="M30 40 Q15 30, 12 20 Q20 22, 30 35" fill={leaf} opacity="0.7" />
@@ -56,7 +57,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Rose
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.35}s` }}>
       <line x1="30" y1="80" x2="30" y2="32" stroke={leaf} strokeWidth="3" strokeLinecap="round" />
       <path d="M22 50 Q12 42, 14 34" stroke={leaf} strokeWidth="2" fill="none" />
@@ -67,7 +68,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Seedling
-  (i, bloom, leaf, size) => (
+  (i, _bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.25}s` }}>
       <line x1="30" y1="80" x2="30" y2="45" stroke={leaf} strokeWidth="3" strokeLinecap="round" />
       <path d="M30 50 Q18 38, 16 28 Q24 32, 30 45" fill={leaf} opacity="0.7" />
@@ -75,7 +76,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Sunflower
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.3}s` }}>
       <line x1="30" y1="80" x2="30" y2="28" stroke={leaf} strokeWidth="4" strokeLinecap="round" />
       <path d="M24 55 Q14 48, 10 40" stroke={leaf} strokeWidth="2" fill="none" />
@@ -87,7 +88,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Lavender
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.2}s` }}>
       <line x1="30" y1="80" x2="30" y2="20" stroke={leaf} strokeWidth="2" strokeLinecap="round" />
       {[0, 4, 8, 12, 16, 20].map((y) => (
@@ -96,7 +97,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Bell flower
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.4}s` }}>
       <line x1="30" y1="80" x2="30" y2="30" stroke={leaf} strokeWidth="3" strokeLinecap="round" />
       <path d="M30 45 Q20 40, 18 32" stroke={leaf} strokeWidth="2" fill="none" />
@@ -107,7 +108,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Mushroom
-  (i, bloom, leaf, size) => (
+  (i, bloom) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.15}s` }}>
       <rect x="26" y="45" width="8" height="35" rx="3" fill="hsl(40, 30%, 85%)" />
       <ellipse cx="30" cy="45" rx="18" ry="14" fill={bloom} />
@@ -117,7 +118,7 @@ const PLANT_VARIANTS: PlantRenderer[] = [
     </svg>
   ),
   // Cactus flower
-  (i, bloom, leaf, size) => (
+  (i, bloom, leaf) => (
     <svg key={i} viewBox="0 0 60 80" className="w-full h-full sway" style={{ animationDelay: `${i * 0.3}s` }}>
       <rect x="24" y="30" width="12" height="50" rx="6" fill={leaf} />
       <rect x="8" y="45" width="16" height="8" rx="4" fill={leaf} opacity="0.8" />
@@ -163,9 +164,7 @@ const SKY_STYLES: Record<string, { bg: string; extra: JSX.Element }> = {
     bg: "linear-gradient(180deg, hsl(230, 40%, 12%) 0%, hsl(220, 35%, 20%) 60%, hsl(230, 25%, 30%) 100%)",
     extra: (
       <>
-        {/* Moon */}
         <div className="absolute top-4 right-8 w-10 h-10 rounded-full" style={{ background: "hsl(45, 20%, 85%)", boxShadow: "0 0 20px hsl(45, 30%, 70%)" }} />
-        {/* Stars */}
         {[
           { x: "10%", y: "12%", s: 2 }, { x: "25%", y: "8%", s: 1.5 }, { x: "40%", y: "18%", s: 2 },
           { x: "55%", y: "6%", s: 1 }, { x: "70%", y: "14%", s: 2.5 }, { x: "15%", y: "25%", s: 1 },
@@ -181,6 +180,8 @@ const SKY_STYLES: Record<string, { bg: string; extra: JSX.Element }> = {
   },
 };
 
+const SOIL_HEIGHT = 24; // px
+
 interface GardenProps {
   entries: GratitudeEntry[];
 }
@@ -194,17 +195,21 @@ const Garden = ({ entries }: GardenProps) => {
       const variantIdx = entry.plantVariant % PLANT_VARIANTS.length;
       const bloomColor = BLOOM_COLORS[entry.plantVariant % BLOOM_COLORS.length];
       const leafColor = LEAF_COLORS[i % LEAF_COLORS.length];
-      const size = 0.8 + (((entry.plantVariant * 7 + i * 3) % 5) / 10); // 0.8-1.2
+      const size = 0.8 + (((entry.plantVariant * 7 + i * 3) % 5) / 10);
       return { entry, variantIdx, bloomColor, leafColor, size };
     });
   }, [entries]);
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden p-6 pb-0 min-h-[280px]" style={{ background: sky.bg }}>
+    <div className="relative w-full rounded-2xl overflow-hidden min-h-[280px]" style={{ background: sky.bg }}>
+      {/* Sky elements */}
       {sky.extra}
 
-      {/* Garden area */}
-      <div className="relative mt-auto" style={{ minHeight: "200px" }}>
+      {/* Creatures */}
+      <GardenCreatures />
+
+      {/* Garden planting area - positioned above soil */}
+      <div className="relative" style={{ minHeight: "220px", paddingTop: "40px" }}>
         {entries.length === 0 ? (
           <div className="text-center pt-16 pb-12">
             <p className="text-muted-foreground font-display text-lg italic drop-shadow-sm" style={{ color: timeOfDay === "night" ? "hsl(40, 20%, 70%)" : undefined }}>
@@ -213,34 +218,41 @@ const Garden = ({ entries }: GardenProps) => {
           </div>
         ) : (
           <div className="relative w-full" style={{ height: "180px" }}>
-            {plants.map(({ entry, variantIdx, bloomColor, leafColor, size }, i) => (
-              <div
-                key={entry.id}
-                className="plant-grow absolute group cursor-pointer"
-                style={{
-                  left: `${entry.gardenX}%`,
-                  bottom: `${8 + entry.gardenY * 0.4}%`,
-                  transformOrigin: "bottom center",
-                  animationDelay: `${i * 0.08}s`,
-                  width: `${50 * size}px`,
-                  height: `${80 * size}px`,
-                  transform: `translateX(-50%) scale(${size})`,
-                  zIndex: Math.round(100 - entry.gardenY),
-                }}
-                title={`${entry.date}: ${entry.text}`}
-              >
-                {PLANT_VARIANTS[variantIdx](i, bloomColor, leafColor, size)}
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-card rounded-lg shadow-lg text-xs max-w-[160px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 border border-border">
-                  <p className="font-display text-[10px] text-muted-foreground">{entry.date}</p>
-                  <p className="truncate text-foreground">{entry.text}</p>
+            {plants.map(({ entry, variantIdx, bloomColor, leafColor, size }, i) => {
+              // gardenY 0-40 maps to vertical variation: lower gardenY = closer to bottom
+              const plantHeight = 80 * size;
+              // Bottom offset: plants sit just above soil. gardenY adds slight depth variation (0-20px)
+              const bottomOffset = SOIL_HEIGHT + (entry.gardenY * 0.5);
+
+              return (
+                <div
+                  key={entry.id}
+                  className="plant-grow absolute group cursor-pointer"
+                  style={{
+                    left: `${entry.gardenX}%`,
+                    bottom: `${bottomOffset}px`,
+                    transformOrigin: "bottom center",
+                    animationDelay: `${i * 0.08}s`,
+                    width: `${50 * size}px`,
+                    height: `${plantHeight}px`,
+                    marginLeft: `${-25 * size}px`, // center horizontally instead of translateX
+                    zIndex: Math.round(100 - entry.gardenY),
+                  }}
+                  title={`${entry.date}: ${entry.text}`}
+                >
+                  {PLANT_VARIANTS[variantIdx](i, bloomColor, leafColor, size)}
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-card rounded-lg shadow-lg text-xs max-w-[160px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 border border-border">
+                    <p className="font-display text-[10px] text-muted-foreground">{entry.date}</p>
+                    <p className="truncate text-foreground">{entry.text}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
         {/* Soil */}
-        <div className="h-6 -mx-6 rounded-t-[40%]" style={{ background: "hsl(25, 35%, 28%)" }} />
+        <div className="absolute bottom-0 left-0 right-0 rounded-t-[40%]" style={{ height: `${SOIL_HEIGHT}px`, background: "hsl(25, 35%, 28%)" }} />
       </div>
     </div>
   );
