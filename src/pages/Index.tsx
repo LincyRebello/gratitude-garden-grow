@@ -6,6 +6,7 @@ import StatsBar from "@/components/StatsBar";
 import StatsDashboard from "@/components/StatsDashboard";
 import ShareGarden from "@/components/ShareGarden";
 import DailyReminder from "@/components/DailyReminder";
+import StreakCelebration from "@/components/StreakCelebration";
 import { useGratitudeStore } from "@/hooks/useGratitudeStore";
 import { Leaf, BookOpen, Flower2, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -88,6 +89,9 @@ const Index = () => {
 
         {/* Daily Reminder */}
         <DailyReminder />
+
+        {/* Streak Celebration */}
+        <StreakCelebration streak={streak} />
       </div>
     </div>
   );

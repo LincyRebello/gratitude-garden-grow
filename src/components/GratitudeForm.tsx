@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Sprout } from "lucide-react";
+import { Sprout, Moon } from "lucide-react";
 
 interface GratitudeFormProps {
   onSubmit: (text: string) => void;
@@ -9,9 +9,28 @@ interface GratitudeFormProps {
   todayText?: string;
 }
 
+function getTimeUntilMidnight() {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  const diff = midnight.getTime() - now.getTime();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  return { hours, minutes };
+}
+
 const GratitudeForm = ({ onSubmit, hasEntryToday, todayText }: GratitudeFormProps) => {
   const [text, setText] = useState("");
   const [justPlanted, setJustPlanted] = useState(false);
+  const [countdown, setCountdown] = useState(getTimeUntilMidnight);
+
+  useEffect(() => {
+    if (!hasEntryToday) return;
+    const interval = setInterval(() => {
+      setCountdown(getTimeUntilMidnight());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [hasEntryToday]);
 
   const handleSubmit = () => {
     if (!text.trim()) return;
@@ -34,6 +53,15 @@ const GratitudeForm = ({ onSubmit, hasEntryToday, todayText }: GratitudeFormProp
             <Sprout className="mx-auto h-8 w-8 text-primary opacity-70" />
             <p className="font-display text-lg text-foreground">Today's gratitude is planted 🌱</p>
             <p className="text-muted-foreground text-sm italic">"{todayText}"</p>
+            <div className="pt-2 flex items-center justify-center gap-2 text-muted-foreground text-sm">
+              <Moon className="h-4 w-4" />
+              <span>
+                Come back in {countdown.hours}h {countdown.minutes}m 🌙
+              </span>
+            </div>
+            <p className="text-muted-foreground/70 text-xs">
+              Your garden grows one seed at a time — rest and return tomorrow.
+            </p>
           </>
         )}
       </div>
