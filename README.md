@@ -25,6 +25,7 @@ No overwhelming journaling. No long prompts. Just one seed, one thought, one day
 -  📤 **Share Your Garden** — capture and share a snapshot of your garden on social media
   - 🔔 **Daily Reminder** — optional browser notification to remind you to plant your seed
 - 📊 **Gratitude Dashboard** — analytics view showing your streaks, trends, consistency calendar and more
+- 🌤️ **Day/Night Sky** — the background dynamically changes based on your time of day (morning, afternoon, evening, night)
 
 ---
 
@@ -38,7 +39,7 @@ This project is actively growing — just like the garden! New features are bein
 - [ ] ☁️ **Moving Clouds** — softly drifting clouds across the sky
 - [ ] 🌈 **Rainbow** — surprise rainbows that appear after long streaks
 - [ ] ⏳ **Smart Lockout Message** — if you've already planted today, the app tells you exactly how many hours until              midnight when you can plant again
-- [ ] 🌤️ **Day/Night Sky** — the background dynamically changes based on your time of day (morning, afternoon, evening, night)
+
 
 ---
 
